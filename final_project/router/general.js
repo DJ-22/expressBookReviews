@@ -19,7 +19,7 @@ public_users.post("/register", (req, res) => {
   
     users.push({ username, password });
     return res.status(200).json({ message: "User registered successfully" });
-  });  
+});  
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
@@ -76,6 +76,18 @@ public_users.get('/review/:isbn', function (req, res) {
     } else {
         return res.status(404).json({ message: "Book not found" });
     }
-  });
+});
+
+const axios = require('axios');
+
+public_users.get('/async-books', async (req, res) => {
+    try {
+        const response = await axios.get('https://jaindaksh006-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/');
+        res.status(200).json(response.data);
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch books asynchronously" });
+    }
+});
+
 
 module.exports.general = public_users;
