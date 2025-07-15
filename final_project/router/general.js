@@ -123,4 +123,23 @@ public_users.get('/async-author/:author', async (req, res) => {
     }
 });  
 
+public_users.get('/async-title/:title', async (req, res) => {
+    const title = req.params.title;
+  
+    try {
+        const response = await axios.get('https://jaindaksh006-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/');
+        const booksData = response.data;
+  
+        const matchingBooks = Object.values(booksData).filter(book => book.title === title);
+  
+        if (matchingBooks.length > 0) {
+            res.status(200).json(matchingBooks);
+        } else {
+            res.status(404).json({ message: "No books found with this title" });
+        }
+    } catch (err) {
+        res.status(500).json({ message: "Failed to fetch books by title" });
+    }
+  });
+  
 module.exports.general = public_users;
