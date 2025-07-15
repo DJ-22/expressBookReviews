@@ -3,7 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
-
+const axios = require('axios');
 
 public_users.post("/register", (req, res) => {
     const { username, password } = req.body;
@@ -78,8 +78,6 @@ public_users.get('/review/:isbn', function (req, res) {
     }
 });
 
-const axios = require('axios');
-
 public_users.get('/async-books', async (req, res) => {
     try {
         const response = await axios.get('https://jaindaksh006-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/');
@@ -89,5 +87,21 @@ public_users.get('/async-books', async (req, res) => {
     }
 });
 
+public_users.get('/promise-isbn/:isbn', (req, res) => {
+    const isbn = req.params.isbn;
+  
+    axios.get('https://jaindaksh006-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/')
+        .then(response => {
+            const book = response.data[isbn];
+            if (book) {
+                res.status(200).json(book);
+            } else {
+                res.status(404).json({ message: "Book not found" });
+            }
+        })
+        .catch(error => {
+            res.status(500).json({ message: "Failed to fetch book by ISBN" });
+        });
+});  
 
 module.exports.general = public_users;
